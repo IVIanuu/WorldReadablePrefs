@@ -1,15 +1,12 @@
 package com.ivianuu.worldreadableprefs.sample;
 
 import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 
-import com.ivianuu.worldreadableprefs.WorldReadablePrefsManager;
+import com.ivianuu.worldreadableprefs.WorldReadablePrefsFix;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,10 +17,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // normally you would call this in your application class
-        WorldReadablePrefsManager.init(this);
-        WorldReadablePrefsManager.setDebug(true);
-        WorldReadablePrefsManager.fixFolderPermissionsAsync();
-        WorldReadablePrefsManager.getPrefs("my_prefs");
+        WorldReadablePrefsFix.builder(this)
+                .fix("my_prefs")
+                .start();
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
