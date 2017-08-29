@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.io.File;
 import java.util.Map;
@@ -33,6 +34,8 @@ import java.util.Set;
 @SuppressLint("SetWorldReadable")
 final class WorldReadablePrefs implements SharedPreferences,
         WorldReadablePrefsManager.FileObserverListener {
+
+    private static final String TAG = WorldReadablePrefs.class.getSimpleName();
 
     private final String prefsName;
     private final Context context;
@@ -141,6 +144,9 @@ final class WorldReadablePrefs implements SharedPreferences,
     }
 
     private void fixPermissions(boolean force) {
+        if (WorldReadablePrefsManager.DEBUG) {
+            Log.d(TAG, "fixing permissions");
+        }
         File sharedPrefsFolder = new File(context.getFilesDir().getAbsolutePath()
                 + "/../shared_prefs");
         if (sharedPrefsFolder.exists()) {

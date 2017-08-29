@@ -35,8 +35,12 @@ import java.util.List;
 @SuppressLint("SetWorldReadable")
 public final class WorldReadablePrefsManager {
 
+    private static final String TAG = WorldReadablePrefsManager.class.getSimpleName();
+
     @SuppressLint("StaticFieldLeak")
     private static WorldReadablePrefsManager instance;
+
+    static boolean DEBUG = false;
 
     private final Context context;
     private final List<FileObserverListener> fileObserverListeners = new ArrayList<>();
@@ -51,12 +55,23 @@ public final class WorldReadablePrefsManager {
     }
 
     /**
+     * Sets whether debug enabled or not
+     */
+    public static void setDebug(boolean debug) {
+        WorldReadablePrefsManager.DEBUG = debug;
+    }
+
+    /**
      * Initializes the world readable prefs manager
      */
     public static void init(@NonNull Context context) {
         if (instance == null) {
             instance = new WorldReadablePrefsManager(context.getApplicationContext());
         }
+    }
+
+    public static void fixPrefs(@NonNull String name) {
+
     }
 
     /**
@@ -101,6 +116,9 @@ public final class WorldReadablePrefsManager {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
+                if (DEBUG) {
+                    Log.d(TAG, "fixing folder permissions");
+                }
                 // main dir
                 File pkgFolder = new File(context.getApplicationInfo().dataDir);
                 if (pkgFolder.exists()) {
@@ -145,8 +163,10 @@ public final class WorldReadablePrefsManager {
                 FileObserver.ATTRIB | FileObserver.CLOSE_WRITE) {
             @Override
             public void onEvent(int event, String path) {
+                Log.d(TAG, "path changed " + path);
                 for (FileObserverListener l : fileObserverListeners) {
                     if ((event & FileObserver.ATTRIB) != 0) {
+                        Log.d(TAG, "file attrs changed");
                         l.onFileAttributesChanged(path);
                     }
                 }

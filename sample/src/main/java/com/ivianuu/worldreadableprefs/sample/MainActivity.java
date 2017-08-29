@@ -3,6 +3,8 @@ package com.ivianuu.worldreadableprefs.sample;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -19,21 +21,22 @@ public class MainActivity extends AppCompatActivity {
 
         // normally you would call this in your application class
         WorldReadablePrefsManager.init(this);
+        WorldReadablePrefsManager.setDebug(true);
         WorldReadablePrefsManager.fixFolderPermissionsAsync();
+        WorldReadablePrefsManager.getPrefs("my_prefs");
 
-        // create prefs
-        final SharedPreferences prefs = WorldReadablePrefsManager.getPrefs("my_prefs");
+        if (savedInstanceState == null) {
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new Prefs()).commit();
+        }
+    }
 
-        // use it like normal with one exception
-        // instead of apply you have to call commit!
-
-        CheckBox testCheckbox = findViewById(R.id.test_checkbox);
-        testCheckbox.setChecked(prefs.getBoolean("my_bool", false));
-        testCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                prefs.edit().putBoolean("my_bool", b).commit();
-            }
-        });
+    public static class Prefs extends PreferenceFragment {
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            getPreferenceManager().setSharedPreferencesName("my_prefs");
+            addPreferencesFromResource(R.xml.preferences);
+        }
     }
 }
