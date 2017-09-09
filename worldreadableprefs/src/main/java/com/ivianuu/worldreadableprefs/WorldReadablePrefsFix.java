@@ -82,58 +82,50 @@ public final class WorldReadablePrefsFix {
 
     private void fixPermissions() {
         selfChange = true;
-        AsyncTask.execute(new Runnable() {
-            @SuppressLint("SetWorldReadable")
-            @Override
-            public void run() {
-                // main dir
-                File pkgFolder = new File(context.getApplicationInfo().dataDir);
-                if (pkgFolder.exists()) {
-                    pkgFolder.setExecutable(true, false);
-                    pkgFolder.setReadable(true, false);
-                }
-                // shared prefs
-                File sharedPrefsFolder = new File(context.getFilesDir().getAbsolutePath()
-                        + "/../shared_prefs");
-                if (sharedPrefsFolder.exists()) {
-                    sharedPrefsFolder.setExecutable(true, false);
-                    sharedPrefsFolder.setReadable(true, false);
-                    // shared pref childs
-                    for (File f : sharedPrefsFolder.listFiles()) {
-                        if (isValid(f.getPath().replace(sharedPrefsFolder.getPath() + "/", ""))) {
-                            f.setExecutable(true, false);
-                            f.setReadable(true, false);
-                        }
+        AsyncTask.execute(() -> {
+            // main dir
+            File pkgFolder = new File(context.getApplicationInfo().dataDir);
+            if (pkgFolder.exists()) {
+                pkgFolder.setExecutable(true, false);
+                pkgFolder.setReadable(true, false);
+            }
+            // shared prefs
+            File sharedPrefsFolder = new File(context.getFilesDir().getAbsolutePath()
+                    + "/../shared_prefs");
+            if (sharedPrefsFolder.exists()) {
+                sharedPrefsFolder.setExecutable(true, false);
+                sharedPrefsFolder.setReadable(true, false);
+                // shared pref childs
+                for (File f : sharedPrefsFolder.listFiles()) {
+                    if (isValid(f.getPath().replace(sharedPrefsFolder.getPath() + "/", ""))) {
+                        f.setExecutable(true, false);
+                        f.setReadable(true, false);
                     }
                 }
-
-                selfChange = false;
             }
+
+            selfChange = false;
         });
     }
 
     private void maybeCreatePrefFiles() {
-        AsyncTask.execute(new Runnable() {
-            @SuppressLint("SetWorldReadable")
-            @Override
-            public void run() {
-                for (String name : prefsToFix) {
-                    try {
-                        File sharedPrefsFolder = new File(context.getFilesDir().getAbsolutePath()
-                                + "/../shared_prefs");
-                        if (!sharedPrefsFolder.exists()) {
-                            sharedPrefsFolder.mkdir();
-                            sharedPrefsFolder.setExecutable(true, false);
-                            sharedPrefsFolder.setReadable(true, false);
-                        }
-                        File f = new File(sharedPrefsFolder.getAbsolutePath() + "/" + name + ".xml");
-                        if (!f.exists()) {
-                            f.createNewFile();
-                            f.setReadable(true, false);
-                        }
-                    } catch (Exception e) {
-                        // catch
+        AsyncTask.execute(() -> {
+            for (String name : prefsToFix) {
+                try {
+                    File sharedPrefsFolder = new File(context.getFilesDir().getAbsolutePath()
+                            + "/../shared_prefs");
+                    if (!sharedPrefsFolder.exists()) {
+                        sharedPrefsFolder.mkdir();
+                        sharedPrefsFolder.setExecutable(true, false);
+                        sharedPrefsFolder.setReadable(true, false);
                     }
+                    File f = new File(sharedPrefsFolder.getAbsolutePath() + "/" + name + ".xml");
+                    if (!f.exists()) {
+                        f.createNewFile();
+                        f.setReadable(true, false);
+                    }
+                } catch (Exception e) {
+                    // catch
                 }
             }
         });

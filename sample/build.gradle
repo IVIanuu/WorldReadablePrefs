@@ -10,11 +10,15 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     // Android support
-    implementation 'com.android.support:appcompat-v7:26.0.1'
+    implementation 'com.android.support:appcompat-v7:26.0.2'
 
     // World Readable Prefs
     implementation project(':worldreadableprefs')
