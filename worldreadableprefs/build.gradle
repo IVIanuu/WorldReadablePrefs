@@ -19,7 +19,7 @@ android {
 
 dependencies {
     // Android support
-    api 'com.android.support:support-annotations:26.0.2'
+    api 'com.android.support:support-annotations:27.0.0'
 }
 
 // build a jar with source files

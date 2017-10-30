@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         // normally you would call this in your application class
         WorldReadablePrefsFix.builder(this)
                 .fix("my_prefs")
+                .fixDefault()
                 .start();
 
         if (savedInstanceState == null) {
