@@ -18,6 +18,7 @@ import java.util.List;
  * World readable prefs fix
  */
 @SuppressWarnings("ResultOfMethodCallIgnored")
+@SuppressLint("SetWorldReadable")
 public final class WorldReadablePrefsFix {
 
     private final Context context;
@@ -31,12 +32,7 @@ public final class WorldReadablePrefsFix {
         this.prefsToFix = builder.prefsToFix;
 
         maybeCreatePrefFiles();
-    }
 
-    /**
-     * Starts fixing the permissions on changes
-     */
-    public void start() {
         if (fileObserver != null) {
             // already started
             return;
@@ -63,19 +59,6 @@ public final class WorldReadablePrefsFix {
         fileObserver.startWatching();
     }
 
-    /**
-     * Stops fixing the permissions on changes
-     */
-    public void stop() {
-        if (fileObserver == null) {
-            // already stopped
-            return;
-        }
-
-        fileObserver.stopWatching();
-        fileObserver = null;
-    }
-
     private boolean isValid(String name) {
         return name != null && prefsToFix.contains(name.replace(".xml", ""));
     }
@@ -89,9 +72,11 @@ public final class WorldReadablePrefsFix {
                 pkgFolder.setExecutable(true, false);
                 pkgFolder.setReadable(true, false);
             }
+
             // shared prefs
             File sharedPrefsFolder = new File(context.getFilesDir().getAbsolutePath()
                     + "/../shared_prefs");
+
             if (sharedPrefsFolder.exists()) {
                 sharedPrefsFolder.setExecutable(true, false);
                 sharedPrefsFolder.setReadable(true, false);
@@ -165,19 +150,8 @@ public final class WorldReadablePrefsFix {
         /**
          * Builds the fix
          */
-        @NonNull
-        public WorldReadablePrefsFix build() {
-            return new WorldReadablePrefsFix(this);
-        }
-
-        /**
-         * Builds and starts the fix
-         */
-        @NonNull
-        public WorldReadablePrefsFix start() {
-            WorldReadablePrefsFix fix = build();
-            fix.start();
-            return fix;
+        public void start() {
+            new WorldReadablePrefsFix(this);
         }
     }
 }
